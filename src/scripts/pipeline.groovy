@@ -1,6 +1,6 @@
 pipeline {
     // любая свободная нода
-    agent any
+    agent {docker {image 'maven:3.8.5'}}
 
     // параметры сборки
     options {
@@ -94,7 +94,13 @@ pipeline {
     post {
         always {
             // очистка ресурсов
-            cleanWs()
+            script {
+                if (getContext(hudson.FilePath))
+                {
+                    deleteDir()
+                }
+            }
+            //cleanWs()
 
             // отправка почты
             wrap([$class: 'BuildUser']) {
